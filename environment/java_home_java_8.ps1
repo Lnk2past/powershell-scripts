@@ -1,0 +1,1 @@
+[System.Environment]::SetEnvironmentVariable('JAVA_HOME', 'C:\zulu8_x64', [System.EnvironmentVariableTarget]::User)
