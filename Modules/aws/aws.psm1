@@ -11,7 +11,13 @@ function Show-All-Instances {
         HelpMessage="Enter query parameters in the form value, value, ...")]
         [ValidatePattern("[a-zA-Z0-9]+")]
         [AllowEmptyCollection()]
-        [array]$queries
+        [array]$queries,
+
+        [Parameter(Mandatory=$false,
+        HelpMessage="Enter query parameters for tags in the form value, value, ...")]
+        [ValidatePattern("[a-zA-Z0-9]+")]
+        [AllowEmptyCollection()]
+        [array]$tags
     )
 
     $command = "aws ec2 describe-instances"
@@ -23,12 +29,24 @@ function Show-All-Instances {
             $key, $value = $filter -split "="
             $filter_string += [string]::Format("Name={0},Values={1} ", $key, $value)
         }
-        $command += " --filter $filter_string"
+        $command += " --filter '$filter_string'"
     }
 
     if ($queries) {
         $queries = $queries -join ","
-        $command += " --query Reservations[*].Instances[*].[$queries]"
+        $command += " --query 'Reservations[*].Instances[*].[$queries"
+
+        if ($tags) {
+            $tag_string = ",Tags["
+            foreach ($tag in $tags)
+            {
+                $tag_string += [string]::Format('?Key==`{0}`', $tag)
+            }
+            $tag_string += ']|[0].Value'
+            $command += $tag_string
+        }
+
+        $command += "]'"
     }
 
     Write-Output( $command )
