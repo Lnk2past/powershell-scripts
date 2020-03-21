@@ -60,6 +60,6 @@ function Show-EC2-InstanceIds {
 
 function Show-EC2-States {
     Show-All-Instances -filters tag:Name=nick-* -queries InstanceId,State.Name
-}; Set-Alias My-Instances Show-EC2-InstanceIds
+}; Set-Alias My-Instance-States Show-EC2-States
 
 Export-ModuleMember -Function * -Alias *
